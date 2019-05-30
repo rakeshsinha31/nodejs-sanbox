@@ -1,0 +1,263 @@
+type Mutation {
+  CustomerAccount(role: String!, username: String!, password: Sring!, firstName: String, lastName: String): Account!
+}
+
+
+directive @hasRole(role: String!) on FIELD | FIELD_DEFINITION
+
+enum AccountRole {
+  ADMIN
+  CUSTOMER
+  VENDOR
+}
+
+enum BalanceTransactionSource {
+  DEPOSIT
+  WITHDRAWAL
+  PLACE_BET
+  SETTLE_BET
+}
+
+enum GameRoundStatus {
+  SETTLED
+  UNSETTLED
+}
+
+enum DepositRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum WithdrawalRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+interface Account {
+  id: ID!
+  role: AccountRole!
+  username: String!
+  firstName: String
+  lastName: String
+}
+
+type AccountsConnectionEdge {
+  cursor: String!
+  node: Account!
+}
+
+type AccountsConnection {
+  totalCount: Int!
+  edges: [AccountsConnectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type VendorAccount implements Account {
+  id: ID!
+  role: AccountRole!
+  username: String!
+  firstName: String
+  lastName: String
+}
+
+type CustomerAccount implements Account {
+  id: ID!
+  role: AccountRole!
+  username: String!
+  firstName: String
+  lastName: String
+  balance: Float!
+}
+
+type BalanceTransaction {
+  id: ID!
+  serialCode: ID!
+  delta: Float!
+  balance: Float!
+  source: BalanceTransactionSource!
+  dateTimeProcessed: DateTime!
+}
+
+type BalanceTransactionsConnectionEdge {
+  cursor: String!
+  node: BalanceTransaction!
+}
+
+type BalanceTransactionsConnection {
+  totalCount: Int!
+  edges: [BalanceTransactionsConnectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type BetRecord {
+  id: ID!
+  serialCode: ID!
+  gameRound: ID!
+  turnover: Float!
+  payout: Float
+  winloss: Float
+  status: GameRoundStatus!
+  dateTimeStarted: DateTime!
+  dateTimeEnded: DateTime
+}
+
+type BetRecordsConnectionEdge {
+  cursor: String!
+  node: BetRecord!
+}
+
+type BetRecordsConnection {
+  totalCount: Int!
+  edges: [BetRecordsConnectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type DepositRequest {
+  id: ID!
+  account: CustomerAccount!
+  serialCode: ID!
+  amount: Float!
+  status: DepositRequestStatus!
+  dateTimeProcessed: DateTime
+}
+
+type DepositRequestsConnectionEdge {
+  cursor: String!
+  node: DepositRequest!
+}
+
+type DepositRequestsConnection {
+  totalCount: Int!
+  edges: [DepositRequestsConnectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type WithdrawalRequest {
+  id: ID!
+  account: CustomerAccount!
+  serialCode: ID!
+  amount: Float!
+  status: WithdrawalRequestStatus!
+  dateTimeProcessed: DateTime
+}
+
+type WithdrawalRequestsConnectionEdge {
+  cursor: String!
+  node: WithdrawalRequest!
+}
+
+type WithdrawalRequestsConnection {
+  totalCount: Int!
+  edges: [WithdrawalRequestsConnectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+input CreateCustomerAccountInput {
+  username: String!
+  password: String!
+  firstName: String
+  lastName: String
+}
+
+input CreateVendorAccountInput {
+  username: String!
+  password: String!
+  firstName: String
+  lastName: String
+}
+
+input AccountsFilterInput {
+  role: AccountRole
+}
+
+input BalanceTransactionsFilterInput {
+  account: ID!
+}
+
+input BetRecordsFilterInput {
+  account: ID!
+}
+
+input PlaceBetInput {
+  account: ID!
+  gameRound: ID!
+  amount: Float!
+}
+
+input PayOutInput {
+  account: ID!
+  gameRound: ID!
+  amount: Float!
+}
+
+input EndGameRound {
+  account: ID!
+  gameRound: ID!
+}
+
+input UpdateCustomerAccountInput {
+  password: String;
+  firstName: String;
+  lastName: String;
+}
+
+input CreateDepositRequestInput {
+  amount: Float!
+}
+
+input CreateWithdrawalRequestInput {
+  amount: Float!
+}
+
+input DepositRequestsFilterInput {
+  account: ID
+  status: DepositRequestStatus
+}
+
+input WithdrawalRequestsFilterInput {
+  account: ID
+  status: WithdrawalRequestStatus
+}
+
+type Query {
+  createCustomerAccount(id: ID!, input: CreateCustomerAccountInput!): Boolean!
+
+  me: Account! @hasRole(role: "CUSTOMER")
+  updateCustomerAccount(input: UpdateCustomerAccountInput!): Boolean! @hasRole(role: "CUSTOMER")
+  createDepositRequest(id: ID!, input: CreateDepositRequestInput!): Boolean! @hasRole(role: "CUSTOMER")
+  createWithdrawalRequest(id: ID!, input: CreateWithdrawalRequestInput!): Boolean! @hasRole(role: "CUSTOMER")
+
+  placeBet(input: PlaceBetInput!): Boolean! @hasRole(role: "VENDOR")
+  payOut(input: PayOutInput!): Boolean! @hasRole(role: "VENDOR")
+  endGameRound(input: EndGameRound!!): Boolean! @hasRole(role: "VENDOR")
+
+  createVendorAccount(id: ID!, input: CreateVendorAccountInput!): Boolean! @hasRole(role: "ADMIN")
+  account(id: ID!): Account @hasRole(role: "ADMIN")
+  accounts(first: Int, after: String, filter: AccountsFilterInput): AccountsConnection! @hasRole(role: "ADMIN")
+  balanceTransactions(
+    first: Int
+    after: String
+    filter: BalanceTransactionsFilterInput
+  ): BalanceTransactionsConnection! @hasRole(role: "ADMIN")
+  betRecords(
+    first: Int
+    after: String
+    filter: BetRecordsFilterInput
+  ): BetRecordsConnection! @hasRole(role: "ADMIN")
+  depositRequests(
+    first: Int
+    after: String
+    filter: DepositRequestsFilterInput
+  ): DepositRequestsConnection! @hasRole(role: "ADMIN")
+  withdrawalRequests(
+    first: Int
+    after: String
+    filter: WithdrawalRequestsFilterInput
+  ): WithdrawalRequestsConnection! @hasRole(role: "ADMIN")
+  approveDepositRequest(id: ID!): Boolean!
+  rejectDepositRequest(id: ID!): Boolean!
+  approveWithdrawalRequest(id: ID!): Boolean!
+  rejectWithdrawalRequest(id: ID!): Boolean!
+}

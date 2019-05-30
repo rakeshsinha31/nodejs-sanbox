@@ -1,0 +1,22 @@
+type Query {
+  account: [Account!]!
+}
+
+type Mutation {
+  CreateAccount(role: String!, username: String!, password: String!, firstName: String, lastName: String): Account!
+}
+
+interface Account {
+  id: ID!
+  role: AccountRole!
+  username: String!
+  firstName: String
+  lastName: String
+}
+
+enum AccountRole {
+  ADMIN
+  CUSTOMER
+  VENDOR
+}
+

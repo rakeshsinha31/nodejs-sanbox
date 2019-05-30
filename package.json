@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-sandbox",
+  "version": "1.0.0",
+  "description": "The candidate must demonstrate the use of the following technologies and concepts:",
+  "main": "resolver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Proto-Garage/nodejs-sandbox.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Proto-Garage/nodejs-sandbox/issues"
+  },
+  "homepage": "https://github.com/Proto-Garage/nodejs-sandbox#readme",
+  "dependencies": {
+    "graphql-yoga": "^1.17.4",
+    "koa": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.48"
+  }
+}
