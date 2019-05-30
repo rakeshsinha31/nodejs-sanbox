@@ -3,7 +3,13 @@ type Query {
 }
 
 type Mutation {
-  CreateAccount(role: String!, username: String!, password: String!, firstName: String, lastName: String): Account!
+  CreateAccount(
+    role: String!,
+    username: String!,
+    password: String!,
+    firstName: String,
+    lastName: String
+  ): Account!
 }
 
 interface Account {
@@ -18,5 +24,13 @@ enum AccountRole {
   ADMIN
   CUSTOMER
   VENDOR
+}
+
+type AdminAccount implements Account {
+  id: ID!
+  role: AccountRole!
+  username: String!
+  firstName: Stringå
+  lastName: String
 }
 

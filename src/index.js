@@ -3,7 +3,7 @@ const { GraphQLServer } = require("graphql-yoga");
 let accounts = [];
 const resolvers = {
   Mutation: {
-    CreateAccount: (parent, args) => {
+    CreateAccount: (_obj, args) => {
       const account = {
         role: args.role,
         username: args.username,
@@ -13,6 +13,14 @@ const resolvers = {
       };
       accounts.push(account);
       return account;
+    }
+  },
+
+  Account: {
+    __resolveType(obj) {
+      if (obj.role === "ADMIN") {
+        return "AdminAccount";
+      }
     }
   }
 };
