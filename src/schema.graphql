@@ -1,23 +1,10 @@
 type Query {
-  account: [Account!]!
+    hello(name: String): String!,
+    account: [Account!]!
 }
-
 type Mutation {
-  CreateAccount(
-    role: String!,
-    username: String!,
-    password: String!,
-    firstName: String,
-    lastName: String
-  ): Account!
-}
-
-interface Account {
-  id: ID!
-  role: AccountRole!
-  username: String!
-  firstName: String
-  lastName: String
+  createAccount(
+    role: String!, username: String!, password: String!, firstName: String, lastName: String): Account!
 }
 
 enum AccountRole {
@@ -25,12 +12,31 @@ enum AccountRole {
   CUSTOMER
   VENDOR
 }
-
+interface Account {
+  id: ID!
+  role: AccountRole!
+  username: String!
+  firstName: String
+  lastName: String
+}
 type AdminAccount implements Account {
   id: ID!
   role: AccountRole!
   username: String!
-  firstName: Stringå
+  firstName: String
   lastName: String
 }
-
+type VendorAccount implements Account {
+  id: ID!
+  role: AccountRole!
+  username: String!
+  firstName: String
+  lastName: String
+}
+type CustomerAccount implements Account {
+  id: ID!
+  role: AccountRole!
+  username: String!
+  firstName: String
+  lastName: String
+}

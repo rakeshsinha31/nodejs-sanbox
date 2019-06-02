@@ -1,26 +1,33 @@
 {
-  "name": "nodejs-sandbox",
+  "name": "nodejs-sanbox",
   "version": "1.0.0",
   "description": "The candidate must demonstrate the use of the following technologies and concepts:",
-  "main": "resolver.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon --exec ts-node src/index.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Proto-Garage/nodejs-sandbox.git"
+    "url": "git+https://github.com/rakeshsinha31/nodejs-sanbox.git"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Proto-Garage/nodejs-sandbox/issues"
+    "url": "https://github.com/rakeshsinha31/nodejs-sanbox/issues"
   },
-  "homepage": "https://github.com/Proto-Garage/nodejs-sandbox#readme",
-  "dependencies": {
-    "graphql-yoga": "^1.17.4",
-    "koa": "^2.7.0"
-  },
+  "homepage": "https://github.com/rakeshsinha31/nodejs-sanbox#readme",
   "devDependencies": {
-    "@types/koa": "^2.0.48"
+    "nodemon": "^1.19.1",
+    "ts-node": "^8.2.0",
+    "tslint": "^5.17.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.5.1"
+  },
+  "dependencies": {
+    "@types/mongoose": "^5.5.3",
+    "atob": "^2.1.2",
+    "graphql": "^14.3.1",
+    "graphql-yoga": "^1.17.4"
   }
 }
