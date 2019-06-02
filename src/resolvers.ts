@@ -2,15 +2,14 @@ import { Account } from "./models/db";
 
 const resolvers = {
   Query: {
-    hello: (_: any, { name }: any) => `Hello ${name || "world"}`
-    //listAccountRole: () => AccountRole.find({})
+    //hello: (_: any, { name }: any) => `Hello ${name || "world"}`
+    listAccounts: () => Account.find({})
   },
   Mutation: {
     createAccount: async (_: any, args: any) => {
       const newAccount = new Account({
         role: args.role,
-        userName: args.username,
-        password: args.password,
+        username: args.username,
         firstName: args.firstName,
         lastName: args.lastName
       });
