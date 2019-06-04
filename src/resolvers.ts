@@ -2,11 +2,18 @@ import { Account } from "./models/db";
 
 const resolvers = {
   Query: {
-    //hello: (_: any, { name }: any) => `Hello ${name || "world"}`
-    listAccounts: () => Account.find({})
+    me: () => Account.find({})
   },
   Mutation: {
-    createAccount: async (_: any, args: any) => {
+    createCustomerAccount: async (
+      _: any,
+      args: {
+        role: String;
+        username: String;
+        firstName?: String;
+        lastName?: String;
+      }
+    ) => {
       const newAccount = new Account({
         role: args.role,
         username: args.username,
@@ -16,6 +23,16 @@ const resolvers = {
       const error = await newAccount.save();
       if (error) return error;
       return newAccount;
+    },
+    updateCustomerAccount: async (_: any, args: any) => {
+      const updateAccount = await Account.updateOne(
+        { _id: args.id },
+        { $set: { firstName: args.firstName, lastName: args.lastName } }
+      );
+      if (!updateAccount) {
+        throw new Error("Error in update Account");
+      }
+      return true;
     }
   },
   Account: {
