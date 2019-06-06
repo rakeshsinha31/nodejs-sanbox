@@ -25,9 +25,9 @@
     "typescript": "^3.5.1"
   },
   "dependencies": {
-    "@types/mongoose": "^5.5.3",
     "atob": "^2.1.2",
     "graphql": "^14.3.1",
-    "graphql-yoga": "^1.17.4"
+    "graphql-yoga": "^1.17.4",
+    "mongoose": "^5.5.12"
   }
 }
