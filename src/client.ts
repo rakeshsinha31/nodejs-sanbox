@@ -1,18 +1,15 @@
 import { GraphQLServer } from "graphql-yoga";
 import { connect } from "amqplib";
 
-const typeDefs = `
-  type Query {
-    listAccounts: String
-  }`;
-
+const d = rpcClient("listAccounts");
+console.log(d);
 const resolvers = {
   Query: {
     listAccounts: () => rpcClient("listAccounts")
   }
 };
 const server = new GraphQLServer({
-  typeDefs: typeDefs,
+  typeDefs: "./accountServices/schema.graphql",
   resolvers
 });
 server.start(() => console.log("Server is  running on localhost:4000"));
@@ -24,33 +21,25 @@ async function rpcClient(listAccounts: any): Promise<any> {
   const correlationId = await generateUuid();
   console.log(" [x] Requesting ", listAccounts);
 
-  function consume(channel: any, createdQeue: any): Promise<any> {
-    console.log("inside consume...");
+  function consume(): Promise<any> {
+    channel.sendToQueue("rpc_queue", Buffer.from(listAccounts), {
+      correlationId: correlationId,
+      replyTo: createdQeue.queue
+    });
     return new Promise(resolve => {
       channel.consume(createdQeue.queue, async function(msg: any) {
         let msgBody = msg.content.toString();
-
-        console.log("inside promise...");
-        console.log(msgBody);
-
-        if (true) {
-          console.log(msg);
+        if (msg.properties.correlationId == correlationId) {
           resolve(JSON.parse(msgBody));
         }
         await channel.ack(msg);
       });
     });
   }
-  // consume(channel, createdQeue)
-  //   .then(() => console.log("THEN"))
-  //   .catch(() => console.log("CATCH"));
-
-  consume(channel, createdQeue).then(() =>
-    channel.sendToQueue("rpc_queue", Buffer.from(listAccounts), {
-      correlationId: correlationId,
-      replyTo: createdQeue.queue
-    })
-  );
+  consume().then(msgBody => {
+    console.log(msgBody);
+    return msgBody;
+  });
 }
 
 function generateUuid() {

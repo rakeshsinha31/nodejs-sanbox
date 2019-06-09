@@ -1,6 +1,6 @@
 type Query {
     hello(name: String): String!,
-    me: [Account!]!
+    listAccounts: [Account]
 }
 type Mutation {
   createCustomerAccount(
