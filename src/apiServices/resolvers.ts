@@ -2,7 +2,7 @@ import { rpcClient } from "../rpcClient";
 
 const resolvers = {
   Query: {
-    me: () => rpcClient("me", {})
+    me: () => rpcClient({ action: "me" })
   },
   Mutation: {
     createCustomerAccount(
@@ -14,13 +14,22 @@ const resolvers = {
         lastName?: String;
       }
     ) {
-      rpcClient("createCustomerAccount", {
-        role: args.role,
-        username: args.username,
-        firstName: args.username,
-        lastName: args.lastName
-      }); // TODO
-      //updateCustomerAccount: rpcClient("me") // TODO
+      return rpcClient({
+        action: "createCustomerAccount",
+        args: {
+          role: args.role,
+          username: args.username,
+          firstName: args.username,
+          lastName: args.lastName
+        }
+      });
+    },
+
+    updateCustomerAccount(_: any, args: any) {
+      return rpcClient({
+        action: "updateCustomerAccount",
+        args: { id: args.id }
+      });
     }
   },
   Account: {

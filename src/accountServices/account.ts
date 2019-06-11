@@ -8,7 +8,13 @@ mongoose
   .then(() => console.log("Connected to DB"))
   .catch(() => console.log("Error in connection to DB"));
 
-const acc = Account.find({});
+async function listCustomeraccounts() {
+  const accounts = await Account.find({});
+  if (!accounts) {
+    throw new Error("Error in list Account");
+  }
+  return accounts;
+}
 
 async function createCustomerAccount(args: {
   role: String;
@@ -27,7 +33,13 @@ async function createCustomerAccount(args: {
   return newAccount;
 }
 
-async function updateCustomerAccount(_: any, args: any) {
+async function updateCustomerAccount(args: {
+  id: String;
+  role?: String;
+  username?: String;
+  firstName?: String;
+  lastName?: String;
+}) {
   const updateAccount = await Account.updateOne(
     { _id: args.id },
     { $set: { firstName: args.firstName, lastName: args.lastName } }
@@ -38,4 +50,4 @@ async function updateCustomerAccount(_: any, args: any) {
   return true;
 }
 
-export { acc, createCustomerAccount, updateCustomerAccount };
+export { listCustomeraccounts, createCustomerAccount, updateCustomerAccount };

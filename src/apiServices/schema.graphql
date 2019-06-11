@@ -1,12 +1,12 @@
 type Query {
     hello(name: String): String!,
-    me: [Account]
+    me: [Account!]!
 }
 type Mutation {
   createCustomerAccount(
-    role: String!, username: String!, firstName: String, lastName: String): Account,
+    role: String!, username: String!, firstName: String, lastName: String): Account!,
     updateCustomerAccount(
-      id: ID!, role: String, username: String!, firstName: String, lastName: String): Boolean!
+      id: ID!, role: String, username: String, firstName: String, lastName: String): Boolean!
 }
 
 enum AccountRole {
