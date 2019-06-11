@@ -1,7 +1,7 @@
 import { connect } from "amqplib";
-import { acc } from "./accountServices/account";
+import { createCustomerAccount, acc } from "./accountServices/account";
 
-async function rpcServer(me: any): Promise<any> {
+async function rpcServer(api: any, args: any): Promise<any> {
   const connection = await connect("amqp://localhost");
   const channel = await connection.createChannel();
   var queue = "rpc_queue";
@@ -11,20 +11,27 @@ async function rpcServer(me: any): Promise<any> {
   channel.prefetch(1);
   console.log(" [x] Awaiting RPC requests");
 
-  channel.consume(queue, function reply(msg: any) {
-    console.log("API - ", msg.content.toString());
-    if (me == "me") {
+  channel.consume(queue, async function reply(msg: any) {
+    if (api == "me") {
       acc.then(data => {
-        channel.sendToQueue(
-          msg.properties.replyTo,
-          Buffer.from(JSON.stringify(data)),
-          {
-            correlationId: msg.properties.correlationId
-          }
-        );
+        sendToQueue(channel, msg, data);
       });
+    }
+    if (api == "createCustomerAccount") {
+      const data = await createCustomerAccount(args);
+      sendToQueue(channel, msg, data);
     }
     channel.ack(msg);
   });
 }
-rpcServer("me");
+
+function sendToQueue(channel: any, msg: any, val: any) {
+  channel.sendToQueue(
+    msg.properties.replyTo,
+    Buffer.from(JSON.stringify(val)),
+    {
+      correlationId: msg.properties.correlationId
+    }
+  );
+}
+export { rpcServer };

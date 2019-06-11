@@ -2,7 +2,26 @@ import { rpcClient } from "../rpcClient";
 
 const resolvers = {
   Query: {
-    me: () => rpcClient("me")
+    me: () => rpcClient("me", {})
+  },
+  Mutation: {
+    createCustomerAccount(
+      _: any,
+      args: {
+        role: String;
+        username: String;
+        firstName?: String;
+        lastName?: String;
+      }
+    ) {
+      rpcClient("createCustomerAccount", {
+        role: args.role,
+        username: args.username,
+        firstName: args.username,
+        lastName: args.lastName
+      }); // TODO
+      //updateCustomerAccount: rpcClient("me") // TODO
+    }
   },
   Account: {
     __resolveType(obj: any) {

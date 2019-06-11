@@ -4,7 +4,7 @@ type Query {
 }
 type Mutation {
   createCustomerAccount(
-    role: String!, username: String!, firstName: String, lastName: String): Account!,
+    role: String!, username: String!, firstName: String, lastName: String): Account,
     updateCustomerAccount(
       id: ID!, role: String, username: String!, firstName: String, lastName: String): Boolean!
 }

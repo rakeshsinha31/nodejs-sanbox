@@ -10,36 +10,32 @@ mongoose
 
 const acc = Account.find({});
 
-const Mutation = {
-  createCustomerAccount: async (
-    _: any,
-    args: {
-      role: String;
-      username: String;
-      firstName?: String;
-      lastName?: String;
-    }
-  ) => {
-    const newAccount = new Account({
-      role: args.role,
-      username: args.username,
-      firstName: args.firstName,
-      lastName: args.lastName
-    });
-    const error = await newAccount.save();
-    if (error) return error;
-    return newAccount;
-  },
-  updateCustomerAccount: async (_: any, args: any) => {
-    const updateAccount = await Account.updateOne(
-      { _id: args.id },
-      { $set: { firstName: args.firstName, lastName: args.lastName } }
-    );
-    if (!updateAccount) {
-      throw new Error("Error in update Account");
-    }
-    return true;
-  }
-};
+async function createCustomerAccount(args: {
+  role: String;
+  username: String;
+  firstName?: String;
+  lastName?: String;
+}) {
+  const newAccount = new Account({
+    role: args.role,
+    username: args.username,
+    firstName: args.firstName,
+    lastName: args.lastName
+  });
+  const error = await newAccount.save();
+  if (error) return error;
+  return newAccount;
+}
 
-export { acc, Mutation };
+async function updateCustomerAccount(_: any, args: any) {
+  const updateAccount = await Account.updateOne(
+    { _id: args.id },
+    { $set: { firstName: args.firstName, lastName: args.lastName } }
+  );
+  if (!updateAccount) {
+    throw new Error("Error in update Account");
+  }
+  return true;
+}
+
+export { acc, createCustomerAccount, updateCustomerAccount };
