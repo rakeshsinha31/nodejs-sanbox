@@ -8,12 +8,20 @@ mongoose
   .then(() => console.log("Connected to DB"))
   .catch(() => console.log("Error in connection to DB"));
 
-async function listCustomeraccounts() {
-  const accounts = await Account.find({});
-  if (!accounts) {
-    throw new Error("Error in list Account");
+async function listCustomeraccounts(id: string = "") {
+  if (id) {
+    const account = await Account.find({ _id: id });
+    if (!account) {
+      throw new Error(`Error in list Account with id: ${id}`);
+    }
+    return account;
+  } else {
+    const accounts = await Account.find({});
+    if (!accounts) {
+      throw new Error("Error in list Account");
+    }
+    return accounts;
   }
-  return accounts;
 }
 
 async function createCustomerAccount(args: {

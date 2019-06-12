@@ -18,7 +18,11 @@ async function rpcServer(): Promise<any> {
   channel.consume(queue, async function reply(msg: any) {
     const cont = JSON.parse(msg.content);
 
-    if (cont.action == "me") {
+    if (cont.action == "account") {
+      const data = await listCustomeraccounts(cont.id);
+      sendToQueue(channel, msg, data);
+    }
+    if (cont.action == "accounts") {
       const data = await listCustomeraccounts();
       sendToQueue(channel, msg, data);
     }

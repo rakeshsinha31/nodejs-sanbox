@@ -2,7 +2,9 @@ import { rpcClient } from "../rpcClient";
 
 const resolvers = {
   Query: {
-    me: () => rpcClient({ action: "me" })
+    account: (_: any, args: { id: string }) =>
+      rpcClient({ action: "account", id: args.id }),
+    accounts: () => rpcClient({ action: "accounts" })
   },
   Mutation: {
     createCustomerAccount(

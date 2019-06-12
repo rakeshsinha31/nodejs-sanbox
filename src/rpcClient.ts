@@ -1,5 +1,4 @@
 import { connect } from "amqplib";
-//import { rpcServer } from "./rpcServer";
 
 async function rpcClient(arg: any): Promise<any> {
   const connection = await connect("amqp://localhost");
