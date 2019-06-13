@@ -1,5 +1,6 @@
 import { connect } from "amqplib";
 import {
+  login,
   listCustomeraccounts,
   createCustomerAccount,
   updateCustomerAccount
@@ -17,6 +18,12 @@ async function rpcServer(): Promise<any> {
 
   channel.consume(queue, async function reply(msg: any) {
     const payload = JSON.parse(msg.content);
+
+    if (payload.action == "login") {
+      console.log(payload);
+      const data = await login(payload);
+      sendToQueue(channel, msg, data);
+    }
 
     if (payload.action == "account") {
       const data = await listCustomeraccounts(payload.id);

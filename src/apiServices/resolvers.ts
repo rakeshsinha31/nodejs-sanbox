@@ -4,7 +4,14 @@ const resolvers = {
   Query: {
     account: (_: any, args: { id: string }) =>
       rpcClient({ action: "account", id: args.id }),
-    accounts: () => rpcClient({ action: "accounts" })
+
+    login(_: any, args: { username: string; password: string }) {
+      return rpcClient({
+        action: "login",
+        username: args.username,
+        password: args.password
+      });
+    }
   },
   Mutation: {
     createCustomerAccount(
@@ -28,7 +35,6 @@ const resolvers = {
         }
       });
     },
-
     updateCustomerAccount(_: any, args: any) {
       return rpcClient({
         action: "updateCustomerAccount",
