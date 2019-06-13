@@ -12,7 +12,7 @@ type Mutation {
 
 enum AccountRole {
   ADMIN
-  CUSTOMERfi
+  CUSTOMER
   VENDOR
 }
 interface Account {
