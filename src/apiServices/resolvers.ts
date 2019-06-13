@@ -12,6 +12,7 @@ const resolvers = {
       args: {
         role: String;
         username: String;
+        password: String;
         firstName?: String;
         lastName?: String;
       }
@@ -21,7 +22,8 @@ const resolvers = {
         args: {
           role: args.role,
           username: args.username,
-          firstName: args.username,
+          password: args.password,
+          firstName: args.firstName,
           lastName: args.lastName
         }
       });

@@ -16,22 +16,22 @@ async function rpcServer(): Promise<any> {
   console.log(" [x] Awaiting RPC requests");
 
   channel.consume(queue, async function reply(msg: any) {
-    const cont = JSON.parse(msg.content);
+    const payload = JSON.parse(msg.content);
 
-    if (cont.action == "account") {
-      const data = await listCustomeraccounts(cont.id);
+    if (payload.action == "account") {
+      const data = await listCustomeraccounts(payload.id);
       sendToQueue(channel, msg, data);
     }
-    if (cont.action == "accounts") {
+    if (payload.action == "accounts") {
       const data = await listCustomeraccounts();
       sendToQueue(channel, msg, data);
     }
-    if (cont.action == "createCustomerAccount") {
-      const data = await createCustomerAccount(cont.args);
+    if (payload.action == "createCustomerAccount") {
+      const data = await createCustomerAccount(payload.args);
       sendToQueue(channel, msg, data);
     }
-    if (cont.action == "updateCustomerAccount") {
-      const data = await updateCustomerAccount(cont.args);
+    if (payload.action == "updateCustomerAccount") {
+      const data = await updateCustomerAccount(payload.args);
       sendToQueue(channel, msg, data);
     }
     channel.ack(msg);

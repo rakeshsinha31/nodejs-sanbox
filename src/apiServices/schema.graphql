@@ -5,14 +5,14 @@ type Query {
 }
 type Mutation {
   createCustomerAccount(
-    role: String!, username: String!, firstName: String, lastName: String): Account!,
+    role: String!, username: String!, password: String!, firstName: String, lastName: String): Account!,
     updateCustomerAccount(
       id: ID!, role: String, username: String, firstName: String, lastName: String): Boolean!
 }
 
 enum AccountRole {
   ADMIN
-  CUSTOMER
+  CUSTOMERfi
   VENDOR
 }
 interface Account {

@@ -25,14 +25,16 @@ async function listCustomeraccounts(id: string = "") {
 }
 
 async function createCustomerAccount(args: {
-  role: String;
-  username: String;
-  firstName?: String;
-  lastName?: String;
+  role: string;
+  username: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
 }) {
   const newAccount = new Account({
     role: args.role,
     username: args.username,
+    password: args.password,
     firstName: args.firstName,
     lastName: args.lastName
   });
@@ -42,11 +44,11 @@ async function createCustomerAccount(args: {
 }
 
 async function updateCustomerAccount(args: {
-  id: String;
-  role?: String;
-  username?: String;
-  firstName?: String;
-  lastName?: String;
+  id: string;
+  role?: string;
+  username?: string;
+  firstName?: string;
+  lastName: string;
 }) {
   const updateAccount = await Account.updateOne(
     { _id: args.id },
