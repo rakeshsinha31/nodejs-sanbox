@@ -1,13 +1,17 @@
 import { connect } from "amqplib";
+import { resolve } from "path";
+import { config } from "dotenv";
+
+config({ path: resolve(__dirname, "./.env") });
 import {
   login,
-  listCustomeraccounts,
+  listCustomerAccounts,
   createCustomerAccount,
   updateCustomerAccount
 } from "./account";
 
 async function rpcServer(): Promise<any> {
-  const connection = await connect("amqp://localhost");
+  const connection = await connect(String(process.env.RMQ_URI));
   const channel = await connection.createChannel();
   var queue = "rpc_queue";
   channel.assertQueue(queue, {
@@ -24,19 +28,24 @@ async function rpcServer(): Promise<any> {
       password: string;
       args: any;
     };
-
+    let data;
     if (payload.action == "login") {
-      const data = await login(payload);
+      try {
+        data = await login(payload);
+      } catch (error) {
+        data = error;
+      }
       sendToQueue(channel, msg, data);
     }
     if (payload.action == "account") {
-      const data = await listCustomeraccounts(payload.id);
+      try {
+        data = await listCustomerAccounts(payload.id);
+      } catch (error) {
+        data = error;
+      }
       sendToQueue(channel, msg, data);
     }
-    if (payload.action == "accounts") {
-      const data = await listCustomeraccounts();
-      sendToQueue(channel, msg, data);
-    }
+
     if (payload.action == "createCustomerAccount") {
       const data = await createCustomerAccount(payload.args);
       sendToQueue(channel, msg, data);

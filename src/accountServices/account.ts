@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Account } from "./models/db";
 import { sign } from "jsonwebtoken";
-import { hash } from "bcrypt";
+import { hash, compare } from "bcrypt";
 import { resolve } from "path";
 import { config } from "dotenv";
 
@@ -16,34 +16,34 @@ mongoose
 
 async function login(args: { username: string; password: string }) {
   const account = await Account.findOne({ username: args.username }).select(
-    "password"
+    "password username"
   );
   if (!account) {
-    throw new Error("Invalid username");
+    return "Invalid username";
   }
-
-  // const valid = await compare(args.password, account.get("password"));
-
-  // if (!valid) {
-  //   throw new Error("Incorrect password");
-  // }
-
+  const valid = await compare(args.password, account.get("password"));
+  if (!valid) {
+    return "Incorrect password";
+  }
   //return json web token
-  return sign({ id: account.id, username: account.get("password") }, "secret", {
+  return sign({ id: account.id, username: account.get("username") }, "secret", {
     expiresIn: "1d"
   });
 }
-async function listCustomeraccounts(id: string = "") {
+async function listCustomerAccounts(id: string = "") {
+  let account, accounts;
   if (id) {
-    const account = await Account.find({ _id: id });
-    if (!account) {
-      throw new Error(`Error in list Account with id: ${id}`);
+    try {
+      account = await Account.find({ _id: id });
+    } catch (error) {
+      return `Error in list Account with id: ${id} Error: ${error}`;
     }
     return account;
   } else {
-    const accounts = await Account.find({});
-    if (!accounts) {
-      throw new Error("Error in list Account");
+    try {
+      accounts = await Account.find({});
+    } catch (error) {
+      return `Error in retrieving accounts: ${error}`;
     }
     return accounts;
   }
@@ -87,7 +87,7 @@ async function updateCustomerAccount(args: {
 
 export {
   login,
-  listCustomeraccounts,
+  listCustomerAccounts,
   createCustomerAccount,
   updateCustomerAccount
 };

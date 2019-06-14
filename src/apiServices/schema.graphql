@@ -1,6 +1,6 @@
 type Query {
-    account(id: ID!): [Account!]
-    accounts: [Account]!
+    account(id: ID!): Account!
+    accounts: [Account!]!
 
 }
 type Mutation {

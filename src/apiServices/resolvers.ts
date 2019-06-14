@@ -1,12 +1,17 @@
 import { rpcClient } from "../rpcClient";
+import { hash } from "bcrypt";
 
 const resolvers = {
   Query: {
-    account: (_: any, args: { id: string }) =>
-      rpcClient({ action: "account", id: args.id })
+    account: (_: any, args: { id: string }) => {
+      return rpcClient({ action: "account", id: args.id });
+    },
+    accounts: () => {
+      return rpcClient({ action: "account" });
+    }
   },
   Mutation: {
-    createCustomerAccount(
+    async createCustomerAccount(
       _: any,
       args: {
         role: String;
@@ -21,7 +26,7 @@ const resolvers = {
         args: {
           role: args.role,
           username: args.username,
-          password: args.password,
+          password: await hash(args.password, 10),
           firstName: args.firstName,
           lastName: args.lastName
         }

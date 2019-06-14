@@ -1,6 +1,10 @@
 import { GraphQLServer } from "graphql-yoga";
 import { resolvers } from "./resolvers";
 import { verify } from "jsonwebtoken";
+import { resolve } from "path";
+import { config } from "dotenv";
+
+config({ path: resolve(__dirname, "./.env") });
 
 const authenticate = async (
   resolve: any,
