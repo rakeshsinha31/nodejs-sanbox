@@ -1,1 +1,7 @@
+node_modules/
+src/.env
+src/accountServices/.env
+../node_modules/
+./node_modules/
 node_modules/*
+

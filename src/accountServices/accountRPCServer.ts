@@ -17,7 +17,13 @@ async function rpcServer(): Promise<any> {
   console.log(" [x] Awaiting RPC requests");
 
   channel.consume(queue, async function reply(msg: any) {
-    const payload = JSON.parse(msg.content);
+    const payload = JSON.parse(msg.content) as {
+      action: string;
+      id: string;
+      username: string;
+      password: string;
+      args: any;
+    };
 
     if (payload.action == "login") {
       const data = await login(payload);

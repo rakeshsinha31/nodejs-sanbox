@@ -2,7 +2,10 @@ import express from "express";
 import { Request, Response, Router } from "express";
 import * as bodyParser from "body-parser";
 import { rpcClient } from "./rpcClient";
+import { resolve } from "path";
+import { config } from "dotenv";
 
+config({ path: resolve(__dirname, "./.env") });
 const app = express();
 const router = Router();
 
@@ -19,6 +22,8 @@ router.route("/login").post(async (req: Request, res: Response) => {
 });
 
 app.use("/auth", router);
-app.listen(8080, function() {
-  console.log("TR API server running on port: " + String(8080));
+app.listen(Number(process.env.LOGIN_PORT), function() {
+  console.log(
+    "TR API server running on port: " + String(process.env.LOGIN_PORT)
+  );
 });

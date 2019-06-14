@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import { Account } from "./models/db";
 import { sign } from "jsonwebtoken";
 import { hash } from "bcrypt";
+import { resolve } from "path";
+import { config } from "dotenv";
+
+config({ path: resolve(__dirname, ".env") });
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/sandbox", {
@@ -15,8 +19,7 @@ async function login(args: { username: string; password: string }) {
     "password"
   );
   if (!account) {
-    return new Error("No user with that username");
-    //return "Invalid username";
+    throw new Error("Invalid username");
   }
 
   // const valid = await compare(args.password, account.get("password"));
