@@ -3,15 +3,7 @@ import { rpcClient } from "../rpcClient";
 const resolvers = {
   Query: {
     account: (_: any, args: { id: string }) =>
-      rpcClient({ action: "account", id: args.id }),
-
-    login(_: any, args: { username: string; password: string }) {
-      return rpcClient({
-        action: "login",
-        username: args.username,
-        password: args.password
-      });
-    }
+      rpcClient({ action: "account", id: args.id })
   },
   Mutation: {
     createCustomerAccount(

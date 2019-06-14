@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Account } from "./models/db";
 import { sign } from "jsonwebtoken";
-import { hash, compare } from "bcrypt";
+import { hash } from "bcrypt";
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/sandbox", {
@@ -14,21 +14,16 @@ async function login(args: { username: string; password: string }) {
   const account = await Account.findOne({ username: args.username }).select(
     "password"
   );
-
   if (!account) {
-    throw new Error("No user with that username");
-  } else {
-    console.log("=======================");
-    console.log(account);
-    console.log(account.get("password"));
-    console.log("======================");
+    return new Error("No user with that username");
+    //return "Invalid username";
   }
 
-  const valid = await compare(args.password, account.get("password"));
+  // const valid = await compare(args.password, account.get("password"));
 
-  if (!valid) {
-    throw new Error("Incorrect password");
-  }
+  // if (!valid) {
+  //   throw new Error("Incorrect password");
+  // }
 
   //return json web token
   return sign({ id: account.id, username: account.get("password") }, "secret", {
