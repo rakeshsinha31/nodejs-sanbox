@@ -30,19 +30,11 @@ async function rpcServer(): Promise<any> {
     };
     let data;
     if (payload.action == "login") {
-      try {
-        data = await login(payload);
-      } catch (error) {
-        data = error;
-      }
+      data = await login(payload);
       sendToQueue(channel, msg, data);
     }
     if (payload.action == "account") {
-      try {
-        data = await listCustomerAccounts(payload.id);
-      } catch (error) {
-        data = error;
-      }
+      data = await listCustomerAccounts(payload.id);
       sendToQueue(channel, msg, data);
     }
 

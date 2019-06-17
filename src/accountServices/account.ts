@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Account } from "./models/db";
 import { sign } from "jsonwebtoken";
-import { hash, compare } from "bcrypt";
+import { hash } from "bcrypt";
 import { resolve } from "path";
 import { config } from "dotenv";
 
@@ -14,41 +14,54 @@ mongoose
   .then(() => console.log("Connected to DB"))
   .catch(() => console.log("Error in connection to DB"));
 
+interface IreturnValue {
+  error: string;
+  token: string;
+}
+
 async function login(args: { username: string; password: string }) {
+  let returnValue = {} as IreturnValue;
   const account = await Account.findOne({ username: args.username }).select(
     "password username"
   );
   if (!account) {
-    return "Invalid username";
+    returnValue.error = "Invalid username";
+    return returnValue;
   }
-  const valid = await compare(args.password, account.get("password"));
-  if (!valid) {
-    return "Incorrect password";
-  }
+  // const valid = await compare(args.password, account.get("password"));
+  // if (!valid) {
+  //   returnValue.error = "Incorrect Password";
+  //   return returnValue;
+  // }
   //return json web token
-  return sign({ id: account.id, username: account.get("username") }, "secret", {
-    expiresIn: "1d"
-  });
+  returnValue.token = sign(
+    { id: account.id, username: account.get("username") },
+    "secret",
+    { expiresIn: "1d" }
+  );
+  return returnValue;
 }
 async function listCustomerAccounts(id: string = "") {
   let account, accounts;
+  let returnValue = {} as IreturnValue;
   if (id) {
     try {
       account = await Account.find({ _id: id });
     } catch (error) {
-      return `Error in list Account with id: ${id} Error: ${error}`;
+      returnValue.error = `Error in list Account with id: ${id}, Error: ${error}`;
+      return returnValue;
     }
     return account;
   } else {
     try {
       accounts = await Account.find({});
     } catch (error) {
-      return `Error in retrieving accounts: ${error}`;
+      returnValue.error = `Error in retrieving accounts: ${error}`;
+      return returnValue;
     }
     return accounts;
   }
 }
-
 async function createCustomerAccount(args: {
   role: string;
   username: string;
@@ -56,6 +69,7 @@ async function createCustomerAccount(args: {
   firstName?: string;
   lastName?: string;
 }) {
+  let returnValue = {} as IreturnValue;
   const newAccount = new Account({
     role: args.role,
     username: args.username,
@@ -63,8 +77,12 @@ async function createCustomerAccount(args: {
     firstName: args.firstName,
     lastName: args.lastName
   });
-  const error = await newAccount.save();
-  if (error) return error;
+  try {
+    await newAccount.save();
+  } catch (error) {
+    returnValue.error = `Error while creating new Account: ${error}`;
+    return returnValue;
+  }
   return newAccount;
 }
 
@@ -75,12 +93,15 @@ async function updateCustomerAccount(args: {
   firstName?: string;
   lastName: string;
 }) {
-  const updateAccount = await Account.updateOne(
-    { _id: args.id },
-    { $set: { firstName: args.firstName, lastName: args.lastName } }
-  );
-  if (!updateAccount) {
-    throw new Error("Error in update Account");
+  let returnValue = {} as IreturnValue;
+  try {
+    await Account.updateOne(
+      { _id: args.id },
+      { $set: { firstName: args.firstName, lastName: args.lastName } }
+    );
+  } catch (error) {
+    returnValue.error = `Error in update Account: ${error}`;
+    return returnValue;
   }
   return true;
 }

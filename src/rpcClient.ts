@@ -12,9 +12,13 @@ async function rpcClient(arg: any): Promise<any> {
     correlationId: correlationId,
     replyTo: createdQeue.queue
   });
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     channel.consume(createdQeue.queue, async function(msg: any) {
       let msgBody = msg.content.toString();
+      console.log(JSON.parse(msg.content).error);
+      if (JSON.parse(msg.content).error) {
+        reject(JSON.parse(msg.content).error);
+      }
       if (msg.properties.correlationId == correlationId) {
         resolve(JSON.parse(msgBody));
       }

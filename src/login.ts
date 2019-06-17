@@ -17,8 +17,11 @@ router.route("/login").post(async (req: Request, res: Response) => {
   req.body.action = "login";
 
   // create Rabbit RPC req to account services.
-  const jwtToken = await rpcClient(req.body);
-  res.status(200).send({ token: jwtToken });
+  const response = await rpcClient(req.body);
+  if (response.error) {
+    return res.status(401).send({ Error: response.error });
+  }
+  res.status(200).send({ token: response.token });
 });
 
 app.use("/auth", router);
