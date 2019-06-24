@@ -1,19 +1,28 @@
 import { connect } from "amqplib";
 import { resolve } from "path";
 import { config } from "dotenv";
+import { rpcClient } from "../rpcClient";
 
 config({ path: resolve(__dirname, "./.env") });
 import {
-  login,
-  listCustomerAccounts,
-  createCustomerAccount,
-  updateCustomerAccount
+  login
+  //   listCustomerAccounts,
+  //   //createCustomerAccount,
+  //   updateCustomerAccount
 } from "./account";
+
+interface IntEvent {
+  eventType: string;
+  aggregateType: string;
+  aggregateId: string;
+  version: number;
+  data: any;
+}
 
 async function rpcServer(): Promise<any> {
   const connection = await connect(String(process.env.RMQ_URI));
   const channel = await connection.createChannel();
-  var queue = "rpc_queue";
+  var queue = "accountQueue";
   channel.assertQueue(queue, {
     durable: false
   });
@@ -33,19 +42,17 @@ async function rpcServer(): Promise<any> {
       data = await login(payload);
       sendToQueue(channel, msg, data);
     }
-    if (payload.action == "account") {
-      data = await listCustomerAccounts(payload.id);
-      sendToQueue(channel, msg, data);
-    }
 
-    if (payload.action == "createCustomerAccount") {
-      const data = await createCustomerAccount(payload.args);
-      sendToQueue(channel, msg, data);
-    }
-    if (payload.action == "updateCustomerAccount") {
-      const data = await updateCustomerAccount(payload.args);
-      sendToQueue(channel, msg, data);
-    }
+    const my_event = {
+      eventType: "craeteCustomerAccount",
+      aggregateType: "someType",
+      aggregateId: "abc1001xyz",
+      version: 1,
+      data: payload
+    } as IntEvent;
+    rpcClient("eventQueue", my_event);
+    sendToQueue(channel, msg, data);
+
     channel.ack(msg);
   });
 }

@@ -4,10 +4,17 @@ import { hash } from "bcrypt";
 const resolvers = {
   Query: {
     account: (_: any, args: { id: string }) => {
-      return rpcClient({ action: "account", id: args.id });
+      return rpcClient("accountQueue", { action: "account", id: args.id });
     },
     accounts: () => {
-      return rpcClient({ action: "account" });
+      return rpcClient("accountQueue", { action: "account" });
+    },
+    balance: (_obj: any, args: any, context: any) => {
+      return rpcClient("accountQueue", {
+        action: "balance",
+        args: args,
+        token: context.request.headers.authorization
+      });
     }
   },
   Mutation: {
@@ -21,7 +28,7 @@ const resolvers = {
         lastName?: String;
       }
     ) {
-      return rpcClient({
+      return rpcClient("accountQueue", {
         action: "createCustomerAccount",
         args: {
           role: args.role,
@@ -33,7 +40,7 @@ const resolvers = {
       });
     },
     updateCustomerAccount(_: any, args: any) {
-      return rpcClient({
+      return rpcClient("accountQueue", {
         action: "updateCustomerAccount",
         args: { id: args.id }
       });

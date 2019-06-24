@@ -28,7 +28,7 @@ async function login(args: { username: string; password: string }) {
     returnValue.error = "Invalid username";
     return returnValue;
   }
-  // const valid = await compare(args.password, account.get("password"));
+  //const valid = await compare(args.password, account.get("password"));
   // if (!valid) {
   //   returnValue.error = "Incorrect Password";
   //   return returnValue;
@@ -37,7 +37,7 @@ async function login(args: { username: string; password: string }) {
   returnValue.token = sign(
     { id: account.id, username: account.get("username") },
     "secret",
-    { expiresIn: "1d" }
+    { expiresIn: "25d" }
   );
   return returnValue;
 }

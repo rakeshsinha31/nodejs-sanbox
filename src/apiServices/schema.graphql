@@ -1,8 +1,36 @@
 type Query {
     account(id: ID!): [Account]!
     accounts: [Account!]!
-
+    balance: [Balance!]!
 }
+
+enum BalanceTransactionSource {
+  DEPOSIT
+  WITHDRAWAL
+  PLACE_BET
+  SETTLE_BET
+}
+
+type Balance {
+  id: ID!
+  account: String!
+  serialCode: String!
+  delta: Float!
+  balance: Float!
+  source: BalanceTransactionSource!
+  dateTimeProcessed: Int!
+}
+
+type BalanceTransaction {
+  id: ID!
+  serialCode: ID!
+  delta: Float!
+  balance: Float!
+  source: BalanceTransactionSource!
+  dateTimeProcessed: Int!
+}
+
+
 type Mutation {
   createCustomerAccount(
     role: String!, username: String!, password: String!, firstName: String, lastName: String): Account!,

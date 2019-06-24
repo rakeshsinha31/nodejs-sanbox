@@ -17,7 +17,7 @@ router.route("/login").post(async (req: Request, res: Response) => {
   req.body.action = "login";
 
   // create Rabbit RPC req to account services.
-  const response = await rpcClient(req.body);
+  const response = await rpcClient("accountQueue", req.body);
   if (response.error) {
     return res.status(401).send({ Error: response.error });
   }
@@ -26,7 +26,5 @@ router.route("/login").post(async (req: Request, res: Response) => {
 
 app.use("/auth", router);
 app.listen(Number(process.env.LOGIN_PORT), function() {
-  console.log(
-    "TR API server running on port: " + String(process.env.LOGIN_PORT)
-  );
+  console.log("Auth server running on port: " + String(process.env.LOGIN_PORT));
 });
