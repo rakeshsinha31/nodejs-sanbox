@@ -1,12 +1,16 @@
 import mongoose from "mongoose";
 import { Balance } from "./models/db";
 
-mongoose
-  .connect("mongodb://127.0.0.1:27017/balancedb", {
+async function connectDB(){
+  let returnValue = {} as IreturnValue;
+  try{
+    await mongoose.connect("mongodb://127.0.0.1:27017/balancedb", {
     useNewUrlParser: true
-  })
-  .then(() => console.log("Connected to Balance DB"))
-  .catch(() => console.log("Error in connection to Balance DB"));
+  })}catch(error){
+    returnValue.error = `Error in  data query: ${error}`;
+    return returnValue;
+  }
+}
 
 interface IreturnValue {
   error: string;
@@ -27,5 +31,5 @@ async function accountBalance(token: string) {
   }
   return data;
 }
-
+connectDB();
 export { accountBalance };

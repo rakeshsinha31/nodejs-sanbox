@@ -7,10 +7,9 @@ import {
 } from "./account";
 
 async function rpcServer(exchange: string): Promise<any> {
-  //let account: any;
   const conn = await connect("amqp://localhost");
   const channel = await conn.createChannel();
-  channel.assertExchange(exchange, "direct", { durable: true });
+  channel.assertExchange(exchange, "fanout", { durable: true });
   channel.assertQueue("someQue", { exclusive: true });
   channel.bindQueue("someQue", exchange, "");
   channel.consume("someQue", reply);
@@ -24,9 +23,7 @@ async function rpcServer(exchange: string): Promise<any> {
     };
 
     if (payload.eventType == "craeteCustomerAccount") {
-      console.log("------in if ------");
-      const account = await createCustomerAccount(payload.data.args);
-      return account;
+      await createCustomerAccount(payload.data.args);
     }
     channel.ack(msg);
   }

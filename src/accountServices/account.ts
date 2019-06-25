@@ -7,12 +7,17 @@ import { config } from "dotenv";
 
 config({ path: resolve(__dirname, ".env") });
 
-mongoose
-  .connect("mongodb://127.0.0.1:27017/sandbox", {
-    useNewUrlParser: true
-  })
-  .then(() => console.log("Connected to DB"))
-  .catch(() => console.log("Error in connection to DB"));
+async function connectDB() {
+  let returnValue = {} as IreturnValue;
+  try {
+    await mongoose.connect("mongodb://127.0.0.1:27017/sandbox", {
+      useNewUrlParser: true
+    });
+  } catch (error) {
+    returnValue.error = `Error in  data query: ${error}`;
+    return returnValue;
+  }
+}
 
 interface IreturnValue {
   error: string;
@@ -112,3 +117,4 @@ export {
   createCustomerAccount,
   updateCustomerAccount
 };
+connectDB();

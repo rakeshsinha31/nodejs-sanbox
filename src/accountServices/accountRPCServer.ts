@@ -11,14 +11,6 @@ import {
   //   updateCustomerAccount
 } from "./account";
 
-interface IntEvent {
-  eventType: string;
-  aggregateType: string;
-  aggregateId: string;
-  version: number;
-  data: any;
-}
-
 async function rpcServer(): Promise<any> {
   const connection = await connect(String(process.env.RMQ_URI));
   const channel = await connection.createChannel();
@@ -43,14 +35,15 @@ async function rpcServer(): Promise<any> {
       sendToQueue(channel, msg, data);
     }
 
-    const my_event = {
+    const myEvent = {
       eventType: "craeteCustomerAccount",
       aggregateType: "someType",
       aggregateId: "abc1001xyz",
       version: 1,
       data: payload
-    } as IntEvent;
-    rpcClient("eventQueue", my_event);
+    };
+
+    rpcClient("eventQueue", myEvent);
     sendToQueue(channel, msg, data);
 
     channel.ack(msg);

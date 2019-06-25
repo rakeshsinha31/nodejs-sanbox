@@ -5,7 +5,7 @@ async function publish(message: any): Promise<any> {
   const channel = await connection.createChannel();
   var exchange = "EventExchange";
 
-  channel.assertExchange(exchange, "direct", {
+  channel.assertExchange(exchange, "fanout", {
     durable: true
   });
   channel.publish(exchange, "", Buffer.from(message.content));
